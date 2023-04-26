@@ -3,6 +3,8 @@ import sys
 
 root_dir = "/var/www/html/"
 nginx_root = "/etc/nginx/sites-enabled"
+# root_dir = "/home/sunith/Documents/projects/next/drop-backend/"
+# nginx_root = "/home/sunith/Documents/projects/next/drop-backend/nginx"
 
 
 def create_nginx(path, domain):
