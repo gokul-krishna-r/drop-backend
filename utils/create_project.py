@@ -24,6 +24,14 @@ def create_nginx(path, domain):
 
 
 def create_project(url, user, proj_name, domain):
+    """
+    :param url: git url
+    :param user: username
+    :param proj_name: project name
+    :param domain: domain name
+    :return: None
+
+    """
     path = root_dir + "{}/{}".format(user, proj_name)
     os.system("mkdir -p {}".format(path))
     os.system("git clone {} {}".format(url, path))

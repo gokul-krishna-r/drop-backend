@@ -10,6 +10,7 @@ import razorpay
 import os
 from bson.binary import Binary
 from bson import ObjectId
+from utils.create_project import create_project as create_proj
 
 load_dotenv()
 
@@ -52,6 +53,7 @@ async def create_project(projects: ProjectModel = Body(...), token: str = Depend
         "user_id": user_id
     })
     created_list_item = created_list_item["projects"]
+    await create_proj(projects.url, user_id, projects.id, projects.pname)
 
     return [ProjectModel(**item) for item in created_list_item]
 
@@ -103,4 +105,3 @@ async def get_project(project_id, token: str = Depends(decode_token)):
     project = [p for p in project["projects"] if p["id"] == project_id][0]
 
     return ProjectModel(**project)
-
