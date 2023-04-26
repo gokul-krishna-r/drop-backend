@@ -30,7 +30,7 @@ class UserModel(UserModelOut):
     lname: str = Field(...)
     email_id: str = Field(default=...)
     password: str = Field(...)
-    deleted: int | None = Field(default=0)
+    deleted: int = Field(default=0)
 
     class Config:
         schema_extra = {
