@@ -53,7 +53,8 @@ async def create_project(projects: ProjectModel = Body(...), token: str = Depend
         "user_id": user_id
     })
     created_list_item = created_list_item["projects"]
-    await create_proj(projects.url, user_id, projects.id, projects.pname)
+    print(f"{projects.url =} {user_id =} {projects.id =} {projects.pname =} {projects =}")
+    create_proj(projects.url, user_id, projects.id, projects.domain)
 
     return [ProjectModel(**item) for item in created_list_item]
 
