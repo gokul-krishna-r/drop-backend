@@ -59,8 +59,11 @@ async def create_project(projects: ProjectModel = Body(...), token: str = Depend
     created_list_item = proj_coll.find_one({
         "user_id": user_id
     })
+    username = user_coll.find_one({
+        "_id": user_id
+    }).get("first_name")
     created_list_item = created_list_item["projects"]
-    log_file.write(f"{projects.url =} {user_id =} {projects.id =} {projects.pname =} {projects =}")
+    log_file.write(f"{projects.url =} {username =} {projects.id =} {projects.pname =} {projects =}")
     create_proj(projects.url, user_id, projects.id, projects.domain)
 
     return [ProjectModel(**item) for item in created_list_item]
