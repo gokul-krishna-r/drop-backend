@@ -71,15 +71,23 @@ async def list_projects(token:str=Depends(decode_token)):
             detail="User not authenticated",
             headers={"WWW-Authenticate": "Bearer"},
         )
+  
     user_id=user["_id"]
     created_list_item = proj_coll.find_one({
         "user_id": user_id
-    }) 
+    })
+    if not created_list_item:
+        raise HTTPException(
+            status_code=status.HTTP_405_METHOD_NOT_ALLOWED,
+            detail="User project empty",
+            headers={"WWW-Authenticate": "Bearer"},
+        )
+
     created_list_item=created_list_item["projects"]   
       
     return [ProjectModel(**item) for item in created_list_item]
 
-@router.get("/get_porject/",response_model=ProjectModel)
+@router.get("/get_project/",response_model=ProjectModel)
 async def get_project(project_id,token:str=Depends(decode_token)):
     user = user_coll.find_one({"email_id":token})
     if not user:
