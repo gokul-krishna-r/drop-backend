@@ -29,6 +29,9 @@ oauth2_scheme = OAuth2PasswordBearer(tokenUrl="/login/")
 
 @router.post("/create_project/", response_model=list[ProjectModel])
 async def create_project(projects: ProjectModel = Body(...), token: str = Depends(decode_token)):
+    log_file = open("log.txt", "a")
+
+    log_file.write("create_project\n")
     user = user_coll.find_one({"email_id": token})
     if not user:
         raise HTTPException(
@@ -37,15 +40,19 @@ async def create_project(projects: ProjectModel = Body(...), token: str = Depend
             headers={"WWW-Authenticate": "Bearer"},
         )
     projects.id = str(ObjectId())
+    log_file.write(f"{projects.id =}\n")
     user_id = user["_id"]
     proj = proj_coll.find_one({"user_id": user_id})
+    log_file.write(f"{proj =}\n")
     if proj:
+        log_file.write("project exists\n")
         new_list_item = proj_coll.update_one({"user_id": user_id}, {"$push": {"projects": jsonable_encoder(projects)}})
         if new_list_item.modified_count == 0:
             raise HTTPException(
                 status_code=status.HTTP_400_BAD_REQUEST,
                 detail="Project not added",
             )
+
     else:
         new_list_item = proj_coll.insert_one({"user_id": user_id, "projects": [jsonable_encoder(projects)]})
 
@@ -53,7 +60,7 @@ async def create_project(projects: ProjectModel = Body(...), token: str = Depend
         "user_id": user_id
     })
     created_list_item = created_list_item["projects"]
-    print(f"{projects.url =} {user_id =} {projects.id =} {projects.pname =} {projects =}")
+    log_file.write(f"{projects.url =} {user_id =} {projects.id =} {projects.pname =} {projects =}")
     create_proj(projects.url, user_id, projects.id, projects.domain)
 
     return [ProjectModel(**item) for item in created_list_item]
