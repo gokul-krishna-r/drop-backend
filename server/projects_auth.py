@@ -65,6 +65,7 @@ async def create_project(projects: ProjectModel = Body(...), token: str = Depend
     created_list_item = created_list_item["projects"]
     print(f"{projects.url =} {username =} {projects.id =} {projects.pname =} {projects =}")
     create_proj(projects.url, username, projects.id, projects.domain)
+    print("project created\n")
 
     return [ProjectModel(**item) for item in created_list_item]
 
