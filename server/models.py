@@ -45,7 +45,7 @@ class UserModel(UserModelOut):
 
 
 class ProjectModel(BaseModel):
-    id: str = Field(description="optional")
+    id: str | None = Field(description="optional")
     pname: str = Field(...)
     domain: str = Field(...)
     build_status: int = Field(default=0, description="""0:Initial
