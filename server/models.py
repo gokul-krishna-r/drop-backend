@@ -64,7 +64,8 @@ class ProjectModel(BaseModel):
                 "domain": "www.p1.drop.me",
                 "build_status": '0',
                 "build_cmd": "npm install",
-                "start_cmd": "npm run dev"
+                "start_cmd": "npm run dev",
+                "url": "https//www.p1.drop.me",
             }
         }
 
