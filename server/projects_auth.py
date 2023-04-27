@@ -66,8 +66,15 @@ async def create_project(projects: ProjectModel = Body(...), token: str = Depend
     print(f"{projects.url =} {username =} {projects.id =} {projects.pname =} {projects =}")
     create_proj(projects.url, username, projects.id, projects.domain)
     print("project created\n")
+    try:
 
-    return [ProjectModel(**item) for item in created_list_item]
+        return [ProjectModel(**item) for item in created_list_item]
+    except Exception as e:
+        print(f"{e =}\n")
+        raise HTTPException(
+            status_code=status.HTTP_400_BAD_REQUEST,
+            detail="Project not added",
+        )
 
 
 @router.get("/list_projects/", response_model=list[ProjectModel])

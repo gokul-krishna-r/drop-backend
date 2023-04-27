@@ -1,16 +1,14 @@
 from fastapi import FastAPI
 from server.authentication import router as auth_router
 from server.projects_auth import router as proj_router
-from server.database import shutdown_db_client,startup_db_client
+from server.database import shutdown_db_client, startup_db_client
 from fastapi.middleware.cors import CORSMiddleware
 from fastapi.staticfiles import StaticFiles
-
 
 app = FastAPI(
     title="Drop API",
     version="0.5.0",
 )
-
 
 origins = [
     "http://localhost",
@@ -26,13 +24,12 @@ app.add_middleware(
 )
 
 app.include_router(auth_router, tags=["Auth"])
-app.include_router(proj_router,tags=["Project"])
+app.include_router(proj_router, tags=["Project"])
 
-@app.get("/",tags=["Test"])
+
+@app.get("/", tags=["Test"])
 async def test_response():
     return "Api Start"
-
-
 
 
 @app.on_event("shutdown")
