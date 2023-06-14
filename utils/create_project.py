@@ -27,7 +27,11 @@ def create_nginx(path, domain):
     print("nginx file created at", nginx_root)
     os.system("sudo systemctl reload nginx")
 
-
+def delete_ngnix(domain):
+    if os.path.exists(nginx_root + "/{}.conf".format(domain)):
+        os.system("rm {}/{}.conf".format(nginx_root, domain))
+        print("nginx file deleted at", nginx_root)
+        os.system("sudo systemctl reload nginx")
 def create_project(url, user, proj_name, domain):
     """
     :param url: git url
@@ -45,6 +49,10 @@ def create_project(url, user, proj_name, domain):
     os.system("chmod -R 755 {}".format(path))
     create_nginx(path=path, domain=domain)
 
+def delete_project(user,proj_name,domain):
+    path = root_dir + "{}/{}".format(user, proj_name)
+    os.system("rm -r {}".format(path))
+    delete_ngnix(domain=domain) 
 
 if __name__ == "__main__":
     create_project(sys.argv[1], sys.argv[2], sys.argv[3], sys.argv[4])
