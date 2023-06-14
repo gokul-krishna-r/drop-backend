@@ -18,7 +18,7 @@ def delete_ngnix(domain):
 
 def delete_project(user,proj_name,domain):
     path = root_dir + "{}/{}".format(user, proj_name)
-    os.system("rm -r {}".format(path))
+    os.system("rm -rf {}".format(path))
     delete_ngnix(domain=domain) 
 
 if __name__ == "__main__":
