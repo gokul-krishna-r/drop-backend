@@ -84,13 +84,13 @@ async def create_project(projects: ProjectModel = Body(...), token: str = Depend
     # get last port
     projects = proj_coll.find()
     count = 0
-    for project in projects:
-        count += len(project["projects"])
+    for p in projects:
+        count += len(p["projects"])
 
     print(f"{count =}")
 
     print(f"{projects.url =} {username =} {projects.id =} {projects.pname =} {projects =}")
-    create_proj(projects.url, username, projects.id, projects.domain, port)
+    create_proj(projects.url, username, projects.id, projects.domain, 8000 + count)
 
     print("project created\n")
     try:
