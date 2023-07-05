@@ -65,8 +65,9 @@ async def create_project(projects: ProjectModel = Body(...), token: str = Depend
     username = user_coll.find_one({
         "_id": user_id
     }).get("fname")
+    print("koi")
 
-        #adding category to DB
+    # adding category to DB
     # Check if the category already exists for the user
     # existing_category = cat_coll.find_one({"name": projects.category, "user_id": user_id})
     #
@@ -76,15 +77,15 @@ async def create_project(projects: ProjectModel = Body(...), token: str = Depend
     #     cat_coll.insert_one(new_category)
     # else:
     #     raise HTTPException(status_code=400, detail="Category already exists")
-    
+
     created_list_item = created_list_item["projects"]
     print(f"{projects.url =} {username =} {projects.id =} {projects.pname =} {projects =}")
     create_proj(projects.url, username, projects.id, projects.domain)
-    
+
     print("project created\n")
     try:
         return [ProjectModel(**item) for item in created_list_item]
-    
+
     except Exception as e:
         print(f"{e =}\n")
         raise HTTPException(
@@ -179,8 +180,9 @@ async def get_project(project_id, token: str = Depends(decode_token)):
 
     return ProjectModel(**project)
 
+
 @router.get("/get_categories/")
-async def list_categories( token: str = Depends(decode_token)):
+async def list_categories(token: str = Depends(decode_token)):
     # Query categories collection to retrieve categories for the user
     user = user_coll.find_one({"email_id": token})
     user_id = user["_id"]
@@ -190,5 +192,3 @@ async def list_categories( token: str = Depends(decode_token)):
     categories_list = [category["name"] for category in categories]
 
     return {"categories": categories_list}
-
-
