@@ -234,7 +234,7 @@ def convert_env_content(env_content: str):
     env_data = {}
 
     for line in lines:
-        key, value = line.split('=')
+        key, value = line.split('=',1)
         env_data[key.strip()] = value.strip()
 
     return env_data
