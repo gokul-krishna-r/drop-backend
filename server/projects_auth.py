@@ -21,9 +21,11 @@ ALGORITHM = os.environ.get("ALGORITHM")
 SECRET_KEY = os.environ.get('SECRET_KEY')
 USER_COLLECTION = os.environ.get('USER_COLLECTION')
 PROJECT_COLLECTION = os.environ.get("PROJECT_COLLECTION")
+CATEGORY_COLLECTION = os.environ.get("CATEGORY_COLLECTION")
 
 proj_coll = database[PROJECT_COLLECTION]
 user_coll = database[USER_COLLECTION]
+cat_coll = database[CATEGORY_COLLECTION]
 
 oauth2_scheme = OAuth2PasswordBearer(tokenUrl="/login/")
 
@@ -66,10 +68,19 @@ async def create_project(projects: ProjectModel = Body(...), token: str = Depend
     created_list_item = created_list_item["projects"]
     print(f"{projects.url =} {username =} {projects.id =} {projects.pname =} {projects =}")
     create_proj(projects.url, username, projects.id, projects.domain)
+    
+    #adding category to DB
+    existing_category = cat_coll.find_one({"name": projects.category, "user_id": user_id})
+
+    if existing_category is None:
+        # Category doesn't exist, insert a new document
+        new_category = {"name": projects.category, "user_id": user_id}
+        cat_coll.insert_one(new_category)
+        print("Category added to DB\n")
     print("project created\n")
     try:
-
         return [ProjectModel(**item) for item in created_list_item]
+    
     except Exception as e:
         print(f"{e =}\n")
         raise HTTPException(
@@ -160,3 +171,15 @@ async def get_project(project_id, token: str = Depends(decode_token)):
     project = [p for p in project["projects"] if p["id"] == project_id][0]
 
     return ProjectModel(**project)
+
+@router.get("/get_categories/")
+async def list_categories( token: str = Depends(decode_token)):
+    # Query categories collection to retrieve categories for the user
+    user = user_coll.find_one({"email_id": token})
+    user_id = user["_id"]
+    categories = cat_coll.find({"user_id": user_id})
+
+    # Convert categories to a list and exclude MongoDB's internal _id field
+    categories_list = [category["name"] for category in categories]
+
+    return {"categories": categories_list}
