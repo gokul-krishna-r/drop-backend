@@ -15,7 +15,7 @@ logger = logging.getLogger(__name__)
 # nginx_root = "/home/sunith/Documents/projects/next/drop-backend/nginx"
 
 
-def create_project(url, user, proj_name, domain, port=8000, runcommand="python manage.py runserver 0.0.0.0:8000"):
+def create_project(url, user, proj_name, domain, port=8001, runcommand="python manage.py runserver 0.0.0.0:8000"):
     """
     :param runcommand:
     :param port:
