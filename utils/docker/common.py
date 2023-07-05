@@ -70,6 +70,8 @@ def pull_project(path):
     if framework == "django":
         restart_docker_project(path)
     elif framework == "html":
+        print('html')
+        os.system(f"rm -r /var/www/html/{path.split('/')[-1]}")
         os.system(f"cp -r {path} /var/www/html/{path.split('/')[-1]}")
 
 
