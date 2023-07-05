@@ -35,7 +35,7 @@ oauth2_scheme = OAuth2PasswordBearer(tokenUrl="/login/")
 
 
 @router.post("/create_project/", response_model=list[ProjectModel])
-async def create_project(projects: ProjectModel = Body(...), token: str = Depends(decode_token)):
+async def create_project(envText:str, projects: ProjectModel = Body(...), token: str = Depends(decode_token)):
     # log_file = open("log.txt", "a")
 
     print("create_project\n")
@@ -101,6 +101,7 @@ async def create_project(projects: ProjectModel = Body(...), token: str = Depend
     create_proj(projects.url, username, projects.id, projects.domain, 8000 + count)
 
     print("project created\n")
+    write_env(projects.path,convert_env_content(envText))
     try:
         return [ProjectModel(**item) for item in created_list_item]
 
@@ -213,10 +214,10 @@ async def list_categories(token: str = Depends(decode_token)):
 
 
 @router.post("/env/", response_model=dict)
-async def post_env(project_id: str = Body(...), env: dict = Body(...), token: str = Depends(decode_token)):
+async def post_env(project_id: str = Body(...), env: str = Body(...), token: str = Depends(decode_token)):
     print("post_env\n")
     print(env)
-    write_env(f"projects/{project_id}", env)
+    write_env(f"projects/{project_id}", convert_env_content(env))
 
     return {"message": "Environment variables updated"}
 
@@ -226,3 +227,12 @@ async def get_env(project_id: str = Body(...), token: str = Depends(decode_token
     print("get_env\n")
     env = read_env(f"projects/{project_id}")
     return env
+
+def convert_env_content(env_content: str):
+    content = env_content['envContent']
+    
+    lines = content.strip().split('\n')
+    key_value_pairs = [line.split('=') for line in lines]
+    env_data = [{ 'key': pair[0].strip(), 'value': pair[1].strip() } for pair in key_value_pairs]
+    
+    return env_data
