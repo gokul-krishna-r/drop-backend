@@ -1,3 +1,5 @@
+import random
+
 from fastapi import APIRouter, Body, Depends, HTTPException, status, File, UploadFile
 from fastapi.encoders import jsonable_encoder
 from dotenv import load_dotenv
@@ -80,8 +82,8 @@ async def create_project(projects: ProjectModel = Body(...), token: str = Depend
 
     created_list_item = created_list_item["projects"]
     # get last port
-    port = proj_coll.find().sort("_id", -1).limit(1)[0]["projects"][-1]["port"]
-    port = int(port) + 1
+    port = 8000
+    print(f"{proj_coll.count_documents()} =")
 
     print(f"{projects.url =} {username =} {projects.id =} {projects.pname =} {projects =}")
     create_proj(projects.url, username, projects.id, projects.domain, port)
