@@ -1,4 +1,4 @@
-from common import *
+import os
 
 
 def generate_docker_compose_file(port, runcommand="python manage.py runserver 0.0.0.0:8000"):
