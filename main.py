@@ -34,4 +34,4 @@ async def test_response():
 
 @app.on_event("shutdown")
 def close_client():
-    shutdown_db_client
+    shutdown_db_client()
