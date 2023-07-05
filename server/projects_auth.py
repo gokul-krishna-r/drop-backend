@@ -79,8 +79,12 @@ async def create_project(projects: ProjectModel = Body(...), token: str = Depend
     #     raise HTTPException(status_code=400, detail="Category already exists")
 
     created_list_item = created_list_item["projects"]
+    # get last port
+    port = proj_coll.find().sort("_id", -1).limit(1)[0]["projects"][-1]["port"]
+    port = int(port) + 1
+
     print(f"{projects.url =} {username =} {projects.id =} {projects.pname =} {projects =}")
-    create_proj(projects.url, username, projects.id, projects.domain)
+    create_proj(projects.url, username, projects.id, projects.domain, port)
 
     print("project created\n")
     try:

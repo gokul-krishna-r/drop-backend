@@ -55,13 +55,14 @@ class ProjectModel(BaseModel):
     4:Destroyed""")
     build_cmd: str = Field(...)
     start_cmd: str = Field(...)
-    category:str=Field(...)
+    category: str = Field(...)
     url: str = Field(...)
+    port: int = Field(default=8111)
 
     @property
     def path(self):
         return f"projects/{self.id}"
-    
+
     class Config:
         schema_extra = {
             "example": {
@@ -70,9 +71,9 @@ class ProjectModel(BaseModel):
                 "build_status": '0',
                 "build_cmd": "npm install",
                 "start_cmd": "npm run dev",
-                "category":"Ecommerce",
+                "category": "Ecommerce",
                 "url": "https://www.p1.drop.me",
-                
+
             }
         }
 
