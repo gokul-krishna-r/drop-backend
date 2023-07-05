@@ -65,18 +65,22 @@ async def create_project(projects: ProjectModel = Body(...), token: str = Depend
     username = user_coll.find_one({
         "_id": user_id
     }).get("fname")
-    created_list_item = created_list_item["projects"]
-    print(f"{projects.url =} {username =} {projects.id =} {projects.pname =} {projects =}")
-    create_proj(projects.url, username, projects.id, projects.domain)
-    
-    #adding category to DB
-    existing_category = cat_coll.find_one({"name": projects.category, "user_id": user_id})
 
+        #adding category to DB
+    # Check if the category already exists for the user
+    existing_category = cat_coll.find_one({"name": projects.category, "user_id": user_id})
+    
     if existing_category is None:
         # Category doesn't exist, insert a new document
         new_category = {"name": projects.category, "user_id": user_id}
         cat_coll.insert_one(new_category)
-        print("Category added to DB\n")
+    else:
+        raise HTTPException(status_code=400, detail="Category already exists")
+    
+    created_list_item = created_list_item["projects"]
+    print(f"{projects.url =} {username =} {projects.id =} {projects.pname =} {projects =}")
+    create_proj(projects.url, username, projects.id, projects.domain)
+    
     print("project created\n")
     try:
         return [ProjectModel(**item) for item in created_list_item]
@@ -183,3 +187,5 @@ async def list_categories( token: str = Depends(decode_token)):
     categories_list = [category["name"] for category in categories]
 
     return {"categories": categories_list}
+
+
