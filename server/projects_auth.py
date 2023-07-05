@@ -236,11 +236,10 @@ def convert_env_content(env_content: str):
     env_data = {}
 
     for line in lines:
-        key, value = line.split('=',1)
+        key, value = line.split('=', 1)
         env_data[key.strip()] = value.strip()
 
     return env_data
-
 
 
 @router.post("/git_pull/{project_id}", response_model=dict)
