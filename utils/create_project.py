@@ -25,11 +25,11 @@ def create_project(url, user, proj_name, domain, port=8000, runcommand="python m
     :param domain: domain name
     :return: None
     """
-    logger.info(f"create_project: {url}, {user}, {proj_name}, {domain}, {port}, {runcommand}")
+    print(f"create_project: {url}, {user}, {proj_name}, {domain}, {port}, {runcommand}")
     clone_project(url=url, projects_folder="projects", project_name=proj_name)
     path = f"projects/{proj_name}"
     framework = check_project_framework_from_path(path=path)
-    logger.info(f"{framework = }")
+    print(f"{framework = }")
     if framework == 'html':
         handle_html(path=path, domain=domain)
     elif framework == 'django':
@@ -37,11 +37,11 @@ def create_project(url, user, proj_name, domain, port=8000, runcommand="python m
 
 
 def delete_project(user, proj_name, domain):
-    logger.info(f"delete_project: {user}, {proj_name}, {domain}")
+    print(f"delete_project: {user}, {proj_name}, {domain}")
     path = root_dir + "{}/{}".format(user, proj_name)
     os.system("rm -r {}".format(path))
     delete_ngnix(domain=domain)
-    logger.info(f"delete_project: {user}, {proj_name}, {domain} deleted")
+    print(f"delete_project: {user}, {proj_name}, {domain} deleted")
 
 
 if __name__ == "__main__":

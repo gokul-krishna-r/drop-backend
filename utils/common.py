@@ -48,7 +48,7 @@ def handle_html(path: str, domain: str):
     # create_nginx(path=path, domain=domain)
 
     """
-    logger.info(f"handle_html: {path}, {domain}")
+    print(f"handle_html: {path}, {domain}")
     os.system("cp -r {} {}".format(path, root_dir))
     os.system("chown -R www-data:www-data {}".format(root_dir))
     os.system("chmod -R 755 {}".format(root_dir))
@@ -60,6 +60,6 @@ def handle_django(path: str, domain: str, port: int = 8000, runcommand: str = "p
     :param path: project path
     :return: None
     """
-    logger.info(f"handle_django: {path}, {domain}, {port}, {runcommand}")
+    print(f"handle_django: {path}, {domain}, {port}, {runcommand}")
     create_django_project(path, domain, port, runcommand)
     # create_proxy_nginx(path=path, domain=domain, port=port)
