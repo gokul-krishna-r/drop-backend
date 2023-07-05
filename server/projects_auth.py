@@ -242,7 +242,7 @@ def convert_env_content(env_content: str):
     return env_data
 
 
-@router.post("/git_pull/{project_id}", response_model=dict)
+@router.post("/git_pull/{project_id}/", response_model=dict)
 async def git_pull(project_id: str):
     print("git_pull\n")
     print(project_id)
