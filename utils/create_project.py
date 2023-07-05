@@ -38,8 +38,9 @@ def create_project(url, user, proj_name, domain, port=8001, runcommand="python m
 
 def delete_project(user, proj_name, domain):
     print(f"delete_project: {user}, {proj_name}, {domain}")
-    path = root_dir + "{}/{}".format(user, proj_name)
+    path = f"projects/{proj_name}"
     os.system("rm -r {}".format(path))
+    os.system("rm -r {}/{}".format(root_dir, proj_name))
     delete_ngnix(domain=domain)
     print(f"delete_project: {user}, {proj_name}, {domain} deleted")
 
