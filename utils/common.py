@@ -5,11 +5,13 @@ common utils
 import os
 
 from utils.docker.django import create_django_project
-from utils.nginx.main import create_nginx
+from utils.nginx.main import create_nginx, create_proxy_nginx
 import logging
+
 root_dir = "/var/www/html/"
 
 logger = logging.getLogger(__name__)
+
 
 def check_project_framework_from_path(path):
     """
@@ -53,11 +55,11 @@ def handle_html(path: str, domain: str):
     create_nginx(path=root_dir + path.split("/")[-1], domain=domain)
 
 
-
-def handle_django(path: str, domain: str, port: int, runcommand: str = "python manage.py runserver"):
+def handle_django(path: str, domain: str, port: int = 8000, runcommand: str = "python manage.py runserver"):
     """
     :param path: project path
     :return: None
     """
     logger.info(f"handle_django: {path}, {domain}, {port}, {runcommand}")
     create_django_project(path, domain, port, runcommand)
+    create_proxy_nginx(path=path, domain=domain, port=port)
