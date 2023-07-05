@@ -40,7 +40,7 @@ def delete_project(user, proj_name, domain):
     print(f"delete_project: {user}, {proj_name}, {domain}")
     path = f"projects/{proj_name}"
     os.system("rm -r {}".format(path))
-    os.system("rm -r {}/{}".format(root_dir, proj_name))
+    os.system("rm -r {}{}".format(root_dir, proj_name))
     delete_ngnix(domain=domain)
     print(f"delete_project: {user}, {proj_name}, {domain} deleted")
 
