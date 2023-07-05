@@ -35,7 +35,7 @@ oauth2_scheme = OAuth2PasswordBearer(tokenUrl="/login/")
 
 
 @router.post("/create_project/", response_model=list[ProjectModel])
-async def create_project(envText:str, projects: ProjectModel = Body(...), token: str = Depends(decode_token)):
+async def create_project(envText:str=Body(default=""), projects: ProjectModel = Body(...), token: str = Depends(decode_token)):
     # log_file = open("log.txt", "a")
 
     print("create_project\n")
@@ -229,10 +229,12 @@ async def get_env(project_id: str = Body(...), token: str = Depends(decode_token
     return env
 
 def convert_env_content(env_content: str):
-    content = env_content['envContent']
     
-    lines = content.strip().split('\n')
-    key_value_pairs = [line.split('=') for line in lines]
-    env_data = [{ 'key': pair[0].strip(), 'value': pair[1].strip() } for pair in key_value_pairs]
-    
+    lines = env_content.strip().split('\n')
+    env_data = {}
+
+    for line in lines:
+        key, value = line.split('=')
+        env_data[key.strip()] = value.strip()
+
     return env_data
