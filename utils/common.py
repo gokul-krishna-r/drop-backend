@@ -3,6 +3,7 @@ common utils
 """
 
 import os
+import time
 
 from utils.docker.common import start_docker_project
 from utils.docker.django import create_django_project
@@ -64,4 +65,5 @@ def handle_django(path: str, domain: str, port: int = 8001, runcommand: str = "p
     print(f"handle_django: {path}, {domain}, {port}, {runcommand}")
     create_django_project(path, domain, port, runcommand)
     create_proxy_nginx(path=path, domain=domain, port=port)
+    time.sleep(5)
     start_docker_project(path=path)
