@@ -68,14 +68,14 @@ async def create_project(projects: ProjectModel = Body(...), token: str = Depend
 
         #adding category to DB
     # Check if the category already exists for the user
-    existing_category = cat_coll.find_one({"name": projects.category, "user_id": user_id})
-    
-    if existing_category is None:
-        # Category doesn't exist, insert a new document
-        new_category = {"name": projects.category, "user_id": user_id}
-        cat_coll.insert_one(new_category)
-    else:
-        raise HTTPException(status_code=400, detail="Category already exists")
+    # existing_category = cat_coll.find_one({"name": projects.category, "user_id": user_id})
+    #
+    # if existing_category is None:
+    #     # Category doesn't exist, insert a new document
+    #     new_category = {"name": projects.category, "user_id": user_id}
+    #     cat_coll.insert_one(new_category)
+    # else:
+    #     raise HTTPException(status_code=400, detail="Category already exists")
     
     created_list_item = created_list_item["projects"]
     print(f"{projects.url =} {username =} {projects.id =} {projects.pname =} {projects =}")
