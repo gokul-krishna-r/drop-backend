@@ -62,4 +62,4 @@ def handle_django(path: str, domain: str, port: int = 8000, runcommand: str = "p
     """
     logger.info(f"handle_django: {path}, {domain}, {port}, {runcommand}")
     create_django_project(path, domain, port, runcommand)
-    create_proxy_nginx(path=path, domain=domain, port=port)
+    # create_proxy_nginx(path=path, domain=domain, port=port)
