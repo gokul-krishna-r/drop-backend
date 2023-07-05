@@ -69,16 +69,22 @@ async def create_project(projects: ProjectModel = Body(...), token: str = Depend
     }).get("fname")
     print("koi")
 
-    # adding category to DB
-    # Check if the category already exists for the user
-    # existing_category = cat_coll.find_one({"name": projects.category, "user_id": user_id})
-    #
-    # if existing_category is None:
-    #     # Category doesn't exist, insert a new document
-    #     new_category = {"name": projects.category, "user_id": user_id}
-    #     cat_coll.insert_one(new_category)
-    # else:
-    #     raise HTTPException(status_code=400, detail="Category already exists")
+    try:
+        # adding category to DB
+        # Check if the category already exists for the user
+        existing_category = cat_coll.find_one({"name": projects.category, "user_id": user_id})
+        #
+        if existing_category is None:
+            #     # Category doesn't exist, insert a new document
+            new_category = {"name": projects.category, "user_id": user_id}
+            cat_coll.insert_one(new_category)
+
+    except Exception as e:
+        print(f"{e =}\n")
+        raise HTTPException(
+            status_code=status.HTTP_400_BAD_REQUEST,
+            detail="Category not added",
+        )
 
     created_list_item = created_list_item["projects"]
     # get last port
