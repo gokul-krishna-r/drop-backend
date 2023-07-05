@@ -82,9 +82,9 @@ async def create_project(projects: ProjectModel = Body(...), token: str = Depend
 
     created_list_item = created_list_item["projects"]
     # get last port
-    projects = proj_coll.find()
+    pro = proj_coll.find()
     count = 0
-    for p in projects:
+    for p in pro:
         count += len(p["projects"])
 
     print(f"{count =}")
