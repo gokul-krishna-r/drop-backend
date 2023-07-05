@@ -2,7 +2,7 @@ from fastapi import APIRouter, Body, Depends, HTTPException, status
 from fastapi.encoders import jsonable_encoder
 import secrets
 from dotenv import load_dotenv
-from .models import UserModel,UserModelOut, Token, TokenData
+from .models import UserModel, UserModelOut, Token, TokenData
 from passlib.context import CryptContext
 import re
 from fastapi.security import OAuth2PasswordBearer, OAuth2PasswordRequestForm
