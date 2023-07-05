@@ -1,5 +1,6 @@
 import os
 import sys
+from nginx.main import create_nginx, delete_ngnix
 
 #
 root_dir = "/var/www/html/"
@@ -8,24 +9,6 @@ nginx_root = "/etc/nginx/sites-enabled"
 
 # root_dir = "/home/sunith/Documents/projects/next/drop-backend/"
 # nginx_root = "/home/sunith/Documents/projects/next/drop-backend/nginx"
-
-
-def create_nginx(path, domain):
-    if not os.path.exists(nginx_root + "/{}.conf".format(domain)):
-        os.system("touch {}/{}.conf".format(nginx_root, domain))
-    with open("{}/{}.conf".format(nginx_root, domain), "w") as f:
-        f.write("server {\n")
-        f.write("\tserver_name {};\n".format(domain))
-        f.write("\tindex index.html index.htm index.nginx-debian.html;\n")
-        f.write("\tlocation / {\n")
-        f.write("\t\tautoindex on;\n")
-        f.write("\t\troot {};\n".format(path))
-        f.write("\t\ttry_files $uri $uri/ =404;\n")
-        f.write("\t}\n")
-        f.write("}\n")
-
-    print("nginx file created at", nginx_root)
-    os.system("sudo systemctl reload nginx")
 
 
 def create_project(url, user, proj_name, domain):
@@ -44,6 +27,12 @@ def create_project(url, user, proj_name, domain):
     os.system("chown -R www-data:www-data {}".format(path))
     os.system("chmod -R 755 {}".format(path))
     create_nginx(path=path, domain=domain)
+
+
+def delete_project(user, proj_name, domain):
+    path = root_dir + "{}/{}".format(user, proj_name)
+    os.system("rm -r {}".format(path))
+    delete_ngnix(domain=domain)
 
 
 if __name__ == "__main__":

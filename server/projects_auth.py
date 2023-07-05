@@ -88,8 +88,10 @@ async def create_project(projects: ProjectModel = Body(...), token: str = Depend
             detail="Project not added",
         )
 
+
 @router.post("/delete_project/", response_model=list[ProjectModel])
-async def delete_project(project_domain:str = Body(...),project_name:str = Body(...),token: str = Depends(decode_token)):
+async def delete_project(project_domain: str = Body(...), project_name: str = Body(...),
+                         token: str = Depends(decode_token)):
     print("delete_project\n")
     user = user_coll.find_one({"email_id": token})
     if not user:
@@ -101,7 +103,7 @@ async def delete_project(project_domain:str = Body(...),project_name:str = Body(
     user_id = user["_id"]
     proj = proj_coll.find_one({"user_id": user_id})
     if proj:
-        new_list_item = proj_coll.update_one({"user_id": user_id}, {"$pull": {"projects": {"domain":project_domain}}})
+        new_list_item = proj_coll.update_one({"user_id": user_id}, {"$pull": {"projects": {"domain": project_domain}}})
         if new_list_item.modified_count == 0:
             raise HTTPException(
                 status_code=status.HTTP_400_BAD_REQUEST,
@@ -120,9 +122,10 @@ async def delete_project(project_domain:str = Body(...),project_name:str = Body(
         "_id": user_id
     }).get("fname")
     created_list_item = created_list_item["projects"]
-    delete_proj(username,project_name, project_domain)
+    delete_proj(username, project_name, project_domain)
     print("project deleted\n")
     return [ProjectModel(**item) for item in created_list_item]
+
 
 @router.get("/list_projects/", response_model=list[ProjectModel])
 async def list_projects(token: str = Depends(decode_token)):
