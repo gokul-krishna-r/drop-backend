@@ -13,6 +13,7 @@ def startup_db_client():
     print("DB Connection Established")
     return database
 
+
 database = startup_db_client()
 
 

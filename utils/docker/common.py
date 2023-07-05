@@ -53,3 +53,28 @@ def restart_docker_project(path):
     stop_docker_project(path)
     start_docker_project(path)
     print("docker restart successful")
+
+
+def write_env(path, envs: dict):
+    checkout_to_project_folder()
+    print(f"write_env: {path}")
+    os.chdir(f"{path}")
+    with open(".env", "w") as f:
+        for key, value in envs.items():
+            f.write(f"{key}={value}\n")
+    print("write_env successful")
+    checkout_to_project_folder()
+
+
+def read_env(path):
+    checkout_to_project_folder()
+    print(f"read_env: {path}")
+    os.chdir(f"{path}")
+    envs = {}
+    with open(".env", "r") as f:
+        for line in f.readlines():
+            key, value = line.split("=")
+            envs[key] = value
+    print("read_env successful")
+    checkout_to_project_folder()
+    return envs

@@ -3,6 +3,8 @@ import random
 from fastapi import APIRouter, Body, Depends, HTTPException, status, File, UploadFile
 from fastapi.encoders import jsonable_encoder
 from dotenv import load_dotenv
+
+from utils.docker.common import write_env, read_env
 from .models import ProjectModel
 from .authentication import decode_token
 from fastapi.security import OAuth2PasswordBearer
@@ -208,3 +210,19 @@ async def list_categories(token: str = Depends(decode_token)):
     categories_list = [category["name"] for category in categories]
 
     return {"categories": categories_list}
+
+
+@router.post("/env/", response_model=dict)
+async def post_env(project_id: str = Body(...), env: dict = Body(...), token: str = Depends(decode_token)):
+    print("post_env\n")
+    print(env)
+    write_env(f"projects/{project_id}", env)
+
+    return {"message": "Environment variables updated"}
+
+
+@router.get("/env/", response_model=dict)
+async def get_env(project_id: str = Body(...), token: str = Depends(decode_token)):
+    print("get_env\n")
+    env = read_env(f"projects/{project_id}")
+    return env
