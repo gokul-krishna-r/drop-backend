@@ -19,6 +19,7 @@ def clone_project(url, projects_folder="projects", project_name="django_project"
 
 
 def start_docker_project(path):
+    checkout_to_project_folder()
     print(f"start_docker_project: {path}")
     os.chdir(f"{path}")
     os.system("docker compose up -d --build")
@@ -27,6 +28,7 @@ def start_docker_project(path):
 
 
 def stop_docker_project(path):
+    checkout_to_project_folder()
     print(f"stop_docker_project: {path}")
     os.chdir(f"{path}")
     os.system("docker compose down")
@@ -35,6 +37,7 @@ def stop_docker_project(path):
 
 
 def pull_project(path):
+    checkout_to_project_folder()
     print(f"pull_project: {path}")
     stop_docker_project(path)
     os.chdir(f"{path}")
@@ -45,6 +48,7 @@ def pull_project(path):
 
 
 def restart_docker_project(path):
+    checkout_to_project_folder()
     print(f"restart_docker_project: {path}")
     stop_docker_project(path)
     start_docker_project(path)
