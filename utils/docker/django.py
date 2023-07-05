@@ -31,8 +31,8 @@ WORKDIR /code
 
 COPY requirements.txt /code/
 RUN pip install -r requirements.txt
-RUN {build_command}
 COPY . /code/
+RUN {build_command}
     """
     with open('Dockerfile', 'w') as f:
         f.write(dockerfile)
