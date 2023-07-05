@@ -55,7 +55,7 @@ def handle_html(path: str, domain: str):
     create_nginx(path=root_dir + path.split("/")[-1], domain=domain)
 
 
-def handle_django(path: str, domain: str, port: int = 8000, runcommand: str = "python manage.py runserver"):
+def handle_django(path: str, domain: str, port: int = 8001, runcommand: str = "python manage.py runserver"):
     """
     :param path: project path
     :return: None

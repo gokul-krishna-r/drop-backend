@@ -11,7 +11,7 @@ services:
       context: .
       dockerfile: Dockerfile
     ports:
-      - "8000:{port}"
+      - "{port}:8000"
     volumes:
       - .:/code
     command:  {runcommand}
