@@ -1,5 +1,6 @@
 import os
 import logging
+
 nginx_root = "/etc/nginx/sites-enabled"
 logger = logging.getLogger(__name__)
 
@@ -25,8 +26,6 @@ def create_nginx(path, domain):
 
 def create_proxy_nginx(path, domain, port):
     print(f"create_proxy_nginx: {path}, {domain}, {port}")
-    nginx_root = "/etc/nginx/conf.d"  # Update the nginx_root path if necessary
-
     if not os.path.exists(f"{nginx_root}/{domain}.conf"):
         os.system(f"touch {nginx_root}/{domain}.conf")
 
