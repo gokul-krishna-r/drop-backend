@@ -1,38 +1,47 @@
 import os
 import sys
 from nginx.main import create_nginx, delete_ngnix
+from utils.common import check_project_framework_from_path, handle_html, handle_django
+from utils.docker.common import clone_project
+import logging
 
 #
 root_dir = "/var/www/html/"
 nginx_root = "/etc/nginx/sites-enabled"
+logger = logging.getLogger(__name__)
 
 
 # root_dir = "/home/sunith/Documents/projects/next/drop-backend/"
 # nginx_root = "/home/sunith/Documents/projects/next/drop-backend/nginx"
 
 
-def create_project(url, user, proj_name, domain):
+def create_project(url, user, proj_name, domain, port=8000, runcommand="python manage.py runserver 0.0.0.0:8000"):
     """
+    :param runcommand:
+    :param port:
     :param url: git url
     :param user: username
     :param proj_name: project name
     :param domain: domain name
     :return: None
-
     """
-    path = root_dir + "{}/{}".format(user, proj_name)
-    os.system("mkdir -p {}".format(path))
-    os.system("git clone {} {}".format(url, path))
-    # os.system("echo '{}' > {}/index.html".format(f"{proj_name} is working fine", path))
-    os.system("chown -R www-data:www-data {}".format(path))
-    os.system("chmod -R 755 {}".format(path))
-    create_nginx(path=path, domain=domain)
+    logger.info(f"create_project: {url}, {user}, {proj_name}, {domain}, {port}, {runcommand}")
+    clone_project(url=url, projects_folder="projects", project_name=proj_name)
+    path = f"projects/{proj_name}"
+    framework = check_project_framework_from_path(path=path)
+    logger.info(f"{framework = }")
+    if framework == 'html':
+        handle_html(path=path, domain=domain)
+    elif framework == 'django':
+        handle_django(path=path, domain=domain, port=port, runcommand=runcommand)
 
 
 def delete_project(user, proj_name, domain):
+    logger.info(f"delete_project: {user}, {proj_name}, {domain}")
     path = root_dir + "{}/{}".format(user, proj_name)
     os.system("rm -r {}".format(path))
     delete_ngnix(domain=domain)
+    logger.info(f"delete_project: {user}, {proj_name}, {domain} deleted")
 
 
 if __name__ == "__main__":

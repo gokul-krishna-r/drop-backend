@@ -1,4 +1,3 @@
-import os
 from common import *
 
 
@@ -39,7 +38,9 @@ COPY . /code/
         f.write(dockerfile)
 
 
-def create_django_project(url, projects_folder="projects", project_name="django_project"):
-    clone_project(url, projects_folder, project_name)
-    generate_docker_compose_file(8000)
+def create_django_project(path, domain, port=8000, runcommand="python manage.py runserver"):
+    # if clone:
+    #     clone_project(url, projects_folder, project_name)
+    os.chdir(f"{path}")
+    generate_docker_compose_file(port=port, runcommand=runcommand)
     generate_dockerfile()

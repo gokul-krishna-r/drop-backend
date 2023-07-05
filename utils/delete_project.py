@@ -16,10 +16,12 @@ def delete_ngnix(domain):
         print("nginx file deleted at", nginx_root)
         os.system("sudo systemctl reload nginx")
 
-def delete_project(user,proj_name,domain):
+
+def delete_project(user, proj_name, domain):
     path = root_dir + "{}/{}".format(user, proj_name)
     os.system("rm -rf {}".format(path))
-    delete_ngnix(domain=domain) 
+    delete_ngnix(domain=domain)
+
 
 if __name__ == "__main__":
     delete_project(sys.argv[1], sys.argv[2], sys.argv[3], sys.argv[4])

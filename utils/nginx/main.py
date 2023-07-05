@@ -1,9 +1,11 @@
 import os
-
+import logging
 nginx_root = "/etc/nginx/sites-enabled"
+logger = logging.getLogger(__name__)
 
 
 def create_nginx(path, domain):
+    logger.info(f"create_nginx: {path}, {domain}")
     if not os.path.exists(nginx_root + "/{}.conf".format(domain)):
         os.system("touch {}/{}.conf".format(nginx_root, domain))
     with open("{}/{}.conf".format(nginx_root, domain), "w") as f:
@@ -22,6 +24,7 @@ def create_nginx(path, domain):
 
 
 def create_proxy_nginx(path, domain, port):
+    logger.info(f"create_proxy_nginx: {path}, {domain}, {port}")
     nginx_root = "/etc/nginx/conf.d"  # Update the nginx_root path if necessary
 
     if not os.path.exists(f"{nginx_root}/{domain}.conf"):
@@ -51,6 +54,7 @@ def create_proxy_nginx(path, domain, port):
 
 
 def delete_ngnix(domain):
+    logger.info(f"delete_ngnix: {domain}")
     if os.path.exists(nginx_root + "/{}.conf".format(domain)):
         os.system("rm {}/{}.conf".format(nginx_root, domain))
         print("nginx file deleted at", nginx_root)

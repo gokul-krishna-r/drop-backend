@@ -11,7 +11,7 @@ import os
 from bson.binary import Binary
 from bson import ObjectId
 from utils.create_project import create_project as create_proj
-from utils.delete_project import delete_project as delete_proj
+from utils.create_project import delete_project as delete_proj
 
 load_dotenv()
 
