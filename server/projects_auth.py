@@ -35,7 +35,8 @@ oauth2_scheme = OAuth2PasswordBearer(tokenUrl="/login/")
 
 
 @router.post("/create_project/", response_model=list[ProjectModel])
-async def create_project(envText:str=Body(default=""), projects: ProjectModel = Body(...), token: str = Depends(decode_token)):
+async def create_project(envText: str = Body(default=""), projects: ProjectModel = Body(...),
+                         token: str = Depends(decode_token)):
     # log_file = open("log.txt", "a")
 
     print("create_project\n")
@@ -101,7 +102,7 @@ async def create_project(envText:str=Body(default=""), projects: ProjectModel = 
     create_proj(projects.url, username, projects.id, projects.domain, 8000 + count)
 
     print("project created\n")
-    write_env(projects.path,convert_env_content(envText))
+    write_env(projects.path, convert_env_content(envText))
     try:
         return [ProjectModel(**item) for item in created_list_item]
 
@@ -228,8 +229,8 @@ async def get_env(project_id: str = Body(...), token: str = Depends(decode_token
     env = read_env(f"projects/{project_id}")
     return env
 
+
 def convert_env_content(env_content: str):
-    
     lines = env_content.strip().split('\n')
     env_data = {}
 
