@@ -4,7 +4,8 @@ from fastapi import APIRouter, Body, Depends, HTTPException, status, File, Uploa
 from fastapi.encoders import jsonable_encoder
 from dotenv import load_dotenv
 
-from utils.docker.common import write_env, read_env
+from utils.docker.common import write_env, read_env, pull_project
+from utils.pull import git_pull
 from .models import ProjectModel
 from .authentication import decode_token
 from fastapi.security import OAuth2PasswordBearer
@@ -239,3 +240,12 @@ def convert_env_content(env_content: str):
         env_data[key.strip()] = value.strip()
 
     return env_data
+
+
+
+@router.post("/git_pull/{project_id}", response_model=dict)
+async def git_pull(project_id: str):
+    print("git_pull\n")
+    print(project_id)
+    pull_project(f"projects/{project_id}")
+    return {"message": "Git pull successful"}

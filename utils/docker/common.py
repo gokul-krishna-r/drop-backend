@@ -4,6 +4,28 @@ import logging
 logger = logging.getLogger(__name__)
 
 
+def check_project_framework_from_path(path):
+    """
+    :param path: project path
+    :return: framework name
+    """
+    if os.path.exists(path + "/manage.py"):
+        return "django"
+    elif os.path.exists(path + "/package.json"):
+        with open(path + "/package.json") as f:
+            content = f.read()
+            if "react" in content:
+                return "react"
+            elif "express" in content:
+                return "express"
+    elif os.path.exists(path + "/index.html"):
+        return "html"
+    elif os.path.exists(path + "/index.js"):
+        return "node"
+    else:
+        return "unknown"
+
+
 def checkout_to_project_folder():
     print("checkout_to_project_folder")
     os.chdir("/home/ubuntu/drop-backend")
@@ -44,7 +66,11 @@ def pull_project(path):
     os.system("git pull")
     print("git pull successful")
     checkout_to_project_folder()
-    start_docker_project(path)
+    framework = check_project_framework_from_path(path)
+    if framework == "django":
+        restart_docker_project(path)
+    elif framework == "html":
+        os.system(f"cp -r {path} /var/www/html/{path.split('/')[-1]}")
 
 
 def restart_docker_project(path):

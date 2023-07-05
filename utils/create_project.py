@@ -1,8 +1,8 @@
 import os
 import sys
 from utils.nginx.main import create_nginx, delete_ngnix
-from utils.common import check_project_framework_from_path, handle_html, handle_django
-from utils.docker.common import clone_project
+from utils.common import handle_html, handle_django
+from utils.docker.common import clone_project, check_project_framework_from_path
 import logging
 
 #

@@ -15,26 +15,6 @@ root_dir = "/var/www/html/"
 logger = logging.getLogger(__name__)
 
 
-def check_project_framework_from_path(path):
-    """
-    :param path: project path
-    :return: framework name
-    """
-    if os.path.exists(path + "/manage.py"):
-        return "django"
-    elif os.path.exists(path + "/package.json"):
-        with open(path + "/package.json") as f:
-            content = f.read()
-            if "react" in content:
-                return "react"
-            elif "express" in content:
-                return "express"
-    elif os.path.exists(path + "/index.html"):
-        return "html"
-    elif os.path.exists(path + "/index.js"):
-        return "node"
-    else:
-        return "unknown"
 
 
 def handle_html(path: str, domain: str):
