@@ -4,7 +4,7 @@ from fastapi import APIRouter, Body, Depends, HTTPException, status, File, Uploa
 from fastapi.encoders import jsonable_encoder
 from dotenv import load_dotenv
 
-from utils.docker.common import write_env, read_env, pull_project
+from utils.docker.common import write_env, read_env, pull_project,start_docker_project,stop_docker_project
 from utils.pull import git_pull
 from .models import ProjectModel
 from .authentication import decode_token
@@ -49,6 +49,8 @@ async def create_project(envText: str = Body(default=""), projects: ProjectModel
             headers={"WWW-Authenticate": "Bearer"},
         )
     projects.id = str(ObjectId())
+    projects.domain+=".radr.in"
+    projects.build_status=2
     print(f"{projects.id =}\n")
     user_id = user["_id"]
     proj = proj_coll.find_one({"user_id": user_id})
@@ -128,6 +130,8 @@ async def delete_project(project_domain: str = Body(...), project_name: str = Bo
         )
     user_id = user["_id"]
     proj = proj_coll.find_one({"user_id": user_id})
+    projects_cat=proj_coll.find_one({"user_id": user_id, "projects.domain": project_domain})["projects"][0]["category"]
+
     if proj:
         new_list_item = proj_coll.update_one({"user_id": user_id}, {"$pull": {"projects": {"domain": project_domain}}})
         if new_list_item.modified_count == 0:
@@ -148,8 +152,57 @@ async def delete_project(project_domain: str = Body(...), project_name: str = Bo
         "_id": user_id
     }).get("fname")
     created_list_item = created_list_item["projects"]
+    delete_category(projects_cat, user_id)
     delete_proj(username, project_name, project_domain)
     print("project deleted\n")
+
+    
+    return [ProjectModel(**item) for item in created_list_item]
+
+
+@router.post("/suspend_project/",response_model=list[ProjectModel])
+async def suspend_project(project_id: str = Body(...),token: str = Depends(decode_token)):
+    user = user_coll.find_one({"email_id": token})
+    if not user:
+        raise HTTPException(
+            status_code=status.HTTP_401_UNAUTHORIZED,
+            detail="User not authenticated",
+            headers={"WWW-Authenticate": "Bearer"},
+        )
+    stop_docker_project(f"projects/{project_id}")
+    user_id=user["_id"]
+    result = proj_coll.update_one(
+    {"user_id": user_id, "projects.id": project_id},
+    {"$set": {"projects.$.build_status": 3}}
+    )
+    created_list_item = proj_coll.find_one({
+        "user_id": user_id
+    })
+
+    created_list_item = created_list_item["projects"]
+    return [ProjectModel(**item) for item in created_list_item]
+
+
+@router.post("/resume_project/")
+async def resume_project(project_id: str = Body(...),token: str = Depends(decode_token)):
+    user = user_coll.find_one({"email_id": token})
+    if not user:
+        raise HTTPException(
+            status_code=status.HTTP_401_UNAUTHORIZED,
+            detail="User not authenticated",
+            headers={"WWW-Authenticate": "Bearer"},
+        )
+    start_docker_project(f"projects/{project_id}")
+    user_id=user["_id"]
+    result = proj_coll.update_one(
+    {"user_id": user_id, "projects.id": project_id},
+    {"$set": {"projects.$.build_status": 3}}
+    )
+    created_list_item = proj_coll.find_one({
+        "user_id": user_id
+    })
+
+    created_list_item = created_list_item["projects"]
     return [ProjectModel(**item) for item in created_list_item]
 
 
@@ -248,3 +301,28 @@ async def git_pull(project_id: str):
     print(project_id)
     pull_project(f"projects/{project_id}")
     return {"message": "Git pull successful"}
+
+@router.post("/del_category/", response_model=dict)
+async def del_cat(token=Depends(decode_token), project_cat: str = Body(...)):
+    user = user_coll.find_one({"email_id": token})
+    user_id = user["_id"]
+    delete_category(project_cat, user_id)
+    return {"message": "Category deleted"}
+
+def delete_category(project_cat, user_id):
+    try:
+    # adding category to DB
+        # Check if the category already exists for the user
+        print(project_cat)
+
+        count = proj_coll.count_documents({"user_id": user_id,"projects.category": project_cat})
+        print(count)
+        if count == 0 :
+            #   Category doesn't exist, insert a new document
+            cat_coll.delete_one({"name": project_cat, "user_id": user_id})
+    except Exception as e:
+        raise HTTPException(
+            status_code=status.HTTP_400_BAD_REQUEST,
+            detail="Category not deleted",
+        )
+
