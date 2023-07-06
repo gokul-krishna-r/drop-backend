@@ -200,7 +200,7 @@ async def resume_project(project_id: str,token: str = Depends(decode_token)):
     user_id=user["_id"]
     result = proj_coll.update_one(
     {"user_id": user_id, "projects.id": project_id},
-    {"$set": {"projects.$.build_status": 3}}
+    {"$set": {"projects.$.build_status": 2}}
     )
     created_list_item = proj_coll.find_one({
         "user_id": user_id
