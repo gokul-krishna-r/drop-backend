@@ -1,6 +1,6 @@
 import random
 
-from fastapi import APIRouter, Body, Depends, HTTPException, status, File, UploadFile
+from fastapi import APIRouter, Body, Depends, HTTPException, status, File, UploadFile,Request
 from fastapi.encoders import jsonable_encoder
 from dotenv import load_dotenv
 
@@ -169,6 +169,7 @@ async def suspend_project(project_id: str = Body(...),token: str = Depends(decod
             detail="User not authenticated",
             headers={"WWW-Authenticate": "Bearer"},
         )
+    print(Request.body())
     stop_docker_project(f"projects/{project_id}")
     user_id=user["_id"]
     result = proj_coll.update_one(
