@@ -160,9 +160,9 @@ async def delete_project(project_domain: str = Body(...), project_name: str = Bo
     return [ProjectModel(**item) for item in created_list_item]
 
 
-@router.post("/suspend_project/",response_model=list[ProjectModel])
-async def suspend_project(project_id: str = Body(...),token: str = Depends(decode_token)):
-    print("Koiiii")
+@router.post("/suspend_project/{project_id}",response_model=list[ProjectModel])
+async def suspend_project(project_id: str,token: str = Depends(decode_token)):
+    print(project_id)
 
     user = user_coll.find_one({"email_id": token})
 
