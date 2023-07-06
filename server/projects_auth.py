@@ -187,8 +187,8 @@ async def suspend_project(project_id: str,token: str = Depends(decode_token)):
     return [ProjectModel(**item) for item in created_list_item]
 
 
-@router.post("/resume_project/")
-async def resume_project(project_id: str = Body(...),token: str = Depends(decode_token)):
+@router.post("/resume_project/{project_id}",response_model=list[ProjectModel])
+async def resume_project(project_id: str,token: str = Depends(decode_token)):
     user = user_coll.find_one({"email_id": token})
     if not user:
         raise HTTPException(
