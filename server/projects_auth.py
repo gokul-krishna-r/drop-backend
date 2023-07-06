@@ -162,14 +162,17 @@ async def delete_project(project_domain: str = Body(...), project_name: str = Bo
 
 @router.post("/suspend_project/",response_model=list[ProjectModel])
 async def suspend_project(project_id: str = Body(...),token: str = Depends(decode_token)):
+    print("Koiiii")
+
     user = user_coll.find_one({"email_id": token})
+
     if not user:
         raise HTTPException(
             status_code=status.HTTP_401_UNAUTHORIZED,
             detail="User not authenticated",
             headers={"WWW-Authenticate": "Bearer"},
         )
-    print(Request.body())
+    print(project_id)
     stop_docker_project(f"projects/{project_id}")
     user_id=user["_id"]
     result = proj_coll.update_one(
