@@ -118,7 +118,7 @@ async def create_project(envText: str = Body(default=""), projects: ProjectModel
 
 
 @router.post("/delete_project/", response_model=list[ProjectModel])
-async def delete_project(project_domain: str = Body(...), project_name: str = Body(...),
+async def delete_project(project_domain: str = Body(...), project_id: str = Body(...),
                          token: str = Depends(decode_token)):
     print("delete_project\n")
     user = user_coll.find_one({"email_id": token})
@@ -153,7 +153,8 @@ async def delete_project(project_domain: str = Body(...), project_name: str = Bo
     }).get("fname")
     created_list_item = created_list_item["projects"]
     delete_category(projects_cat, user_id)
-    delete_proj(username, project_name, project_domain)
+    stop_docker_project(f"projects/{project_id}")
+    delete_proj(username, project_id, project_domain)
     print("project deleted\n")
 
     
@@ -311,7 +312,12 @@ async def del_cat(token=Depends(decode_token), project_cat: str = Body(...)):
     user = user_coll.find_one({"email_id": token})
     user_id = user["_id"]
     delete_category(project_cat, user_id)
-    return {"message": "Category deleted"}
+    categories = cat_coll.find({"user_id": user_id})
+
+    # Convert categories to a list and exclude MongoDB's internal _id field
+    categories_list = [category["name"] for category in categories]
+
+    return {"categories": categories_list}
 
 def delete_category(project_cat, user_id):
     try:
