@@ -5,7 +5,7 @@ from fastapi.encoders import jsonable_encoder
 from dotenv import load_dotenv
 
 
-from utils.docker.common import write_env, read_env, pull_project,start_docker_project,stop_docker_project,check_project_framework_from_path
+from utils.docker.common import write_env, read_env, pull_project,start_docker_project,stop_docker_project,check_project_framework_from_path,restart_docker_project
 from utils.docker.django import start_django_project
 from utils.pull import git_pull
 from .models import ProjectModel
@@ -108,6 +108,8 @@ async def create_project(envText: str = Body(default=""), projects: ProjectModel
 
     print("project created\n")
     write_env(projects.path, convert_env_content(envText))
+    restart_docker_project(f"projects/{projects.id}")
+
     try:
         return [ProjectModel(**item) for item in created_list_item]
 
@@ -207,7 +209,6 @@ async def resume_project(project_id: str,token: str = Depends(decode_token)):
         print('html')
         start_docker_project(f"projects/{project_id}")
 
-    start_docker_project(f"projects/{project_id}")
     user_id=user["_id"]
     result = proj_coll.update_one(
     {"user_id": user_id, "projects.id": project_id},
