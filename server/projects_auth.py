@@ -17,6 +17,7 @@ import razorpay
 import os
 from bson.binary import Binary
 from bson import ObjectId
+from utils.create_project import convert_env_content
 from utils.create_project import create_project as create_proj
 from utils.create_project import delete_project as delete_proj
 from utils.create_project import create_project_task
@@ -38,7 +39,7 @@ cat_coll = database[CATEGORY_COLLECTION]
 oauth2_scheme = OAuth2PasswordBearer(tokenUrl="/login/")
 
 
-@router.post("/create_project/", response_model=list[ProjectModel])
+@router.post("/create_project/")
 async def create_project(background_tasks: BackgroundTasks,envText: str = Body(default=""), projects: ProjectModel = Body(...),
                          token: str = Depends(decode_token)):
     # log_file = open("log.txt", "a")
@@ -237,15 +238,6 @@ async def get_env(project_id: str = Body(...), token: str = Depends(decode_token
     return env
 
 
-def convert_env_content(env_content: str):
-    lines = env_content.strip().split('\n')
-    env_data = {}
-
-    for line in lines:
-        key, value = line.split('=', 1)
-        env_data[key.strip()] = value.strip()
-
-    return env_data
 
 
 @router.post("/git_pull/{project_id}/", response_model=dict)

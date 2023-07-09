@@ -1,6 +1,5 @@
 import os
 import sys
-from server.projects_auth import convert_env_content
 from utils.nginx.main import create_nginx, create_proxy_nginx, delete_ngnix
 from utils.common import handle_html, handle_django
 from utils.docker.common import clone_project, check_project_framework_from_path
@@ -88,7 +87,7 @@ def create_project_task(envText: str, projects: ProjectModel,user_id:str):
     print(f"{count =}")
 
     print(f"{projects.url =} {username =} {projects.id =} {projects.pname =} {projects =}")
-    create_proxy_nginx(projects.url, username, projects.id, projects.domain, 8000 + count)
+    create_proxy_nginx(projects.path, projects.domain, 8000 + count)
 
     print("project created\n")
     write_env(projects.path, convert_env_content(envText))
@@ -133,6 +132,16 @@ def delete_project(user, proj_name, domain):
     delete_ngnix(domain=domain)
     print(f"delete_project: {user}, {proj_name}, {domain} deleted")
 
+
+def convert_env_content(env_content: str):
+    lines = env_content.strip().split('\n')
+    env_data = {}
+
+    for line in lines:
+        key, value = line.split('=', 1)
+        env_data[key.strip()] = value.strip()
+
+    return env_data
 
 if __name__ == "__main__":
     create_project(sys.argv[1], sys.argv[2], sys.argv[3], sys.argv[4])
