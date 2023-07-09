@@ -1,6 +1,6 @@
 import random
 
-from fastapi import APIRouter, Body, Depends, HTTPException, status, File, UploadFile,Request
+from fastapi import APIRouter, Body, Depends, HTTPException, status, File, UploadFile,Request,BackgroundTasks
 from fastapi.encoders import jsonable_encoder
 from dotenv import load_dotenv
 
@@ -19,6 +19,7 @@ from bson.binary import Binary
 from bson import ObjectId
 from utils.create_project import create_project as create_proj
 from utils.create_project import delete_project as delete_proj
+from utils.create_project import create_project_task
 
 load_dotenv()
 
@@ -38,7 +39,7 @@ oauth2_scheme = OAuth2PasswordBearer(tokenUrl="/login/")
 
 
 @router.post("/create_project/", response_model=list[ProjectModel])
-async def create_project(envText: str = Body(default=""), projects: ProjectModel = Body(...),
+async def create_project(background_tasks: BackgroundTasks,envText: str = Body(default=""), projects: ProjectModel = Body(...),
                          token: str = Depends(decode_token)):
     # log_file = open("log.txt", "a")
 
@@ -50,75 +51,11 @@ async def create_project(envText: str = Body(default=""), projects: ProjectModel
             detail="User not authenticated",
             headers={"WWW-Authenticate": "Bearer"},
         )
-    projects.id = str(ObjectId())
-    projects.domain+=".radr.in"
-    projects.build_status=2
-    print(f"{projects.id =}\n")
     user_id = user["_id"]
-    proj = proj_coll.find_one({"user_id": user_id})
-    print(f"{proj =}\n")
-    if proj:
-        print("project exists\n")
-        new_list_item = proj_coll.update_one({"user_id": user_id}, {"$push": {"projects": jsonable_encoder(projects)}})
-        if new_list_item.modified_count == 0:
-            raise HTTPException(
-                status_code=status.HTTP_400_BAD_REQUEST,
-                detail="Project not added",
-            )
+    background_tasks.add_task(create_project_task, envText, projects,user_id)
 
-    else:
-        new_list_item = proj_coll.insert_one({"user_id": user_id, "projects": [jsonable_encoder(projects)]})
+    create_project_task(envText, projects, user_id)
 
-    created_list_item = proj_coll.find_one({
-        "user_id": user_id
-    })
-    username = user_coll.find_one({
-        "_id": user_id
-    }).get("fname")
-    print("koi")
-
-    try:
-        # adding category to DB
-        # Check if the category already exists for the user
-        existing_category = cat_coll.find_one({"name": projects.category, "user_id": user_id})
-        #
-        if existing_category is None:
-            #     # Category doesn't exist, insert a new document
-            new_category = {"name": projects.category, "user_id": user_id}
-            cat_coll.insert_one(new_category)
-
-    except Exception as e:
-        print(f"{e =}\n")
-        raise HTTPException(
-            status_code=status.HTTP_400_BAD_REQUEST,
-            detail="Category not added",
-        )
-
-    created_list_item = created_list_item["projects"]
-    # get last port
-    pro = proj_coll.find()
-    count = 0
-    for p in pro:
-        count += len(p["projects"])
-
-    print(f"{count =}")
-
-    print(f"{projects.url =} {username =} {projects.id =} {projects.pname =} {projects =}")
-    create_proj(projects.url, username, projects.id, projects.domain, 8000 + count)
-
-    print("project created\n")
-    write_env(projects.path, convert_env_content(envText))
-    restart_docker_project(f"projects/{projects.id}")
-
-    try:
-        return [ProjectModel(**item) for item in created_list_item]
-
-    except Exception as e:
-        print(f"{e =}\n")
-        raise HTTPException(
-            status_code=status.HTTP_400_BAD_REQUEST,
-            detail="Project not added",
-        )
 
 
 @router.post("/delete_project/", response_model=list[ProjectModel])
