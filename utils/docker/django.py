@@ -1,5 +1,5 @@
 import os
-
+from utils.docker.common import checkout_to_project_folder
 
 def generate_docker_compose_file(port, runcommand="python manage.py runserver 0.0.0.0:8000"):
     docker_compose = f"""
@@ -44,3 +44,13 @@ def create_django_project(path, domain, port=8000, runcommand="python manage.py 
     os.chdir(f"{path}")
     generate_docker_compose_file(port=port, runcommand=runcommand)
     generate_dockerfile()
+
+def start_django_project(path):
+    checkout_to_project_folder()
+    print(f"start_docker_project: {path}")
+    os.chdir(f"{path}")
+    os.system("docker compose up -d --build")
+    os.system("docker compose exec web python manage.py makemigrations")
+    os.system("docker compose exec web python manage.py migrate")
+    print("docker build successful")
+    checkout_to_project_folder()

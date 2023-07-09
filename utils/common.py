@@ -8,6 +8,7 @@ import time
 from utils.docker.common import start_docker_project
 from utils.docker.django import create_django_project
 from utils.nginx.main import create_nginx, create_proxy_nginx
+from utils.docker.django   import start_django_project
 import logging
 
 root_dir = "/var/www/html/"
@@ -46,4 +47,4 @@ def handle_django(path: str, domain: str, port: int = 8001, runcommand: str = "p
     create_django_project(path, domain, port, runcommand)
     create_proxy_nginx(path=path, domain=domain, port=port)
     # time.sleep(10)
-    start_docker_project(path=path)
+    start_django_project(path=path)

@@ -4,7 +4,9 @@ from fastapi import APIRouter, Body, Depends, HTTPException, status, File, Uploa
 from fastapi.encoders import jsonable_encoder
 from dotenv import load_dotenv
 
-from utils.docker.common import write_env, read_env, pull_project,start_docker_project,stop_docker_project
+
+from utils.docker.common import write_env, read_env, pull_project,start_docker_project,stop_docker_project,check_project_framework_from_path
+from utils.docker.django import start_django_project
 from utils.pull import git_pull
 from .models import ProjectModel
 from .authentication import decode_token
@@ -197,6 +199,14 @@ async def resume_project(project_id: str,token: str = Depends(decode_token)):
             detail="User not authenticated",
             headers={"WWW-Authenticate": "Bearer"},
         )
+    
+    framework = check_project_framework_from_path(f"projects/{project_id}")
+    if framework == "django":
+        start_django_project(f"projects/{project_id}")
+    elif framework == "html":
+        print('html')
+        start_docker_project(f"projects/{project_id}")
+
     start_docker_project(f"projects/{project_id}")
     user_id=user["_id"]
     result = proj_coll.update_one(
