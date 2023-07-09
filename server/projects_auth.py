@@ -55,7 +55,6 @@ async def create_project(background_tasks: BackgroundTasks,envText: str = Body(d
     user_id = user["_id"]
     background_tasks.add_task(create_project_task, envText, projects,user_id)
 
-    create_project_task(envText, projects, user_id)
 
 
 
