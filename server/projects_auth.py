@@ -43,7 +43,6 @@ oauth2_scheme = OAuth2PasswordBearer(tokenUrl="/login/")
 async def create_project(background_tasks: BackgroundTasks,envText: str = Body(default=""), projects: ProjectModel = Body(...),
                          token: str = Depends(decode_token)):
     # log_file = open("log.txt", "a")
-
     print("create_project\n")
     user = user_coll.find_one({"email_id": token})
     if not user:
@@ -105,7 +104,7 @@ async def delete_project(project_domain: str = Body(...), project_id: str = Body
 
 
 @router.post("/suspend_project/{project_id}",response_model=list[ProjectModel])
-async def suspend_project(project_id: str,token: str = Depends(decode_token)):
+async def suspend_project(background_tasks: BackgroundTasks,project_id: str,token: str = Depends(decode_token)):
     print(project_id)
 
     user = user_coll.find_one({"email_id": token})
@@ -117,7 +116,7 @@ async def suspend_project(project_id: str,token: str = Depends(decode_token)):
             headers={"WWW-Authenticate": "Bearer"},
         )
     print(project_id)
-    stop_docker_project(f"projects/{project_id}")
+    background_tasks.add_task(stop_docker_project, f"projects/{project_id}")
     user_id=user["_id"]
     result = proj_coll.update_one(
     {"user_id": user_id, "projects.id": project_id},
@@ -132,7 +131,7 @@ async def suspend_project(project_id: str,token: str = Depends(decode_token)):
 
 
 @router.post("/resume_project/{project_id}",response_model=list[ProjectModel])
-async def resume_project(project_id: str,token: str = Depends(decode_token)):
+async def resume_project(background_tasks: BackgroundTasks,project_id: str,token: str = Depends(decode_token)):
     user = user_coll.find_one({"email_id": token})
     if not user:
         raise HTTPException(
@@ -143,10 +142,10 @@ async def resume_project(project_id: str,token: str = Depends(decode_token)):
     
     framework = check_project_framework_from_path(f"projects/{project_id}")
     if framework == "django":
-        start_django_project(f"projects/{project_id}")
+            background_tasks.add_task(start_django_project, f"projects/{project_id}")
     elif framework == "html":
         print('html')
-        start_docker_project(f"projects/{project_id}")
+        background_tasks.add_task(start_docker_project,f"projects/{project_id}")
 
     user_id=user["_id"]
     result = proj_coll.update_one(

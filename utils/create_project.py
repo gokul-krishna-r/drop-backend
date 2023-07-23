@@ -48,10 +48,8 @@ def create_project_task(envText: str, projects: ProjectModel,user_id:str):
                 status_code=status.HTTP_400_BAD_REQUEST,
                 detail="Project not added",
             )
-
     else:
         new_list_item = proj_coll.insert_one({"user_id": user_id, "projects": [jsonable_encoder(projects)]})
-
     created_list_item = proj_coll.find_one({
         "user_id": user_id
     })
@@ -122,6 +120,7 @@ def create_project(url, user, proj_name, domain, port=8001, runcommand="python m
         handle_html(path=path, domain=domain)
     elif framework == 'django':
         handle_django(path=path, domain=domain, port=port, runcommand=runcommand)
+
 
 
 def delete_project(user, proj_name, domain):
