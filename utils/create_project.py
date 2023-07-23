@@ -1,7 +1,7 @@
 import os
 import sys
 from utils.nginx.main import create_nginx, create_proxy_nginx, delete_ngnix
-from utils.common import handle_html, handle_django
+from utils.common import handle_html, handle_django, handle_fastapi
 from utils.docker.common import clone_project, check_project_framework_from_path
 import logging
 from server.models import ProjectModel
@@ -124,6 +124,8 @@ def create_project(url, user, proj_name, domain, port=8001, runcommand="python m
         handle_html(path=path, domain=domain)
     elif framework == 'django':
         handle_django(path=path, domain=domain, port=port, runcommand=runcommand)
+    elif framework == 'fastapi':
+        handle_fastapi(path=path, domain=domain, port=port, runcommand=runcommand)
 
 
 

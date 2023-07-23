@@ -8,14 +8,14 @@ import time
 from utils.docker.common import start_docker_project
 from utils.docker.django import create_django_project
 from utils.nginx.main import create_nginx, create_proxy_nginx
+from utils.docker.fastapi import create_fastapi_project
 from utils.docker.django   import start_django_project
+
 import logging
 
 root_dir = "/var/www/html/"
 
 logger = logging.getLogger(__name__)
-
-
 
 
 def handle_html(path: str, domain: str):
@@ -48,3 +48,15 @@ def handle_django(path: str, domain: str, port: int = 8001, runcommand: str = "p
     create_proxy_nginx(path=path, domain=domain, port=port)
     # time.sleep(10)
     start_django_project(path=path)
+
+
+def handle_fastapi(path: str, domain: str, port: int = 8001, runcommand: str = "uvicorn main:app --host"):
+    """
+    :param path: project path
+    :return: None
+    """
+    print(f"handle_fastapi: {path}, {domain}, {port}, {runcommand}")
+    create_fastapi_project(path, domain, port, runcommand)
+    create_proxy_nginx(path=path, domain=domain, port=port)
+    # time.sleep(10)
+    start_docker_project(path=path)
