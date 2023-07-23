@@ -58,7 +58,7 @@ async def create_project(background_tasks: BackgroundTasks,envText: str = Body(d
         # Check if the category already exists for the user
         pro = proj_coll.find()
         for p in pro:
-            if projects.domain==(p["projects"]["domain"]+".radr.in"):
+            if projects.domain+".radr.in"==(p["projects"]["domain"]):
                 raise HTTPException(
                     status_code=status.HTTP_400_BAD_REQUEST,
                     detail="Project with same domain exists",
