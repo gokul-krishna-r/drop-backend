@@ -18,7 +18,6 @@ services:
     with open('docker-compose.yml', 'w') as f:
         f.write(docker_compose)
 
-
 def generate_dockerfile(build_command="python manage.py makemigrations && python manage.py migrate"):
     dockerfile = f"""
 FROM python:3.9
