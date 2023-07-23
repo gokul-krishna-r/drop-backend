@@ -54,20 +54,24 @@ async def create_project(background_tasks: BackgroundTasks,envText: str = Body(d
     user_id = user["_id"]
     proj=proj_coll.find_one({"user_id": user_id})
     pro = proj_coll.find()
-    for p in pro:
-        print(p["projects"])
-        for j in p["projects"]:
-            if projects.domain+".radr.in"==(j["domain"]):
+
+    if(proj==None):
+        print("no project")
+    else:
+        for p in pro:
+            print(p["projects"])
+            for j in p["projects"]:
+                if projects.domain+".radr.in"==(j["domain"]):
+                    raise HTTPException(
+                    status_code=status.HTTP_400_BAD_REQUEST,
+                    detail="Project with same domain exists",
+                    )
+        for p in proj["projects"]:
+            if projects.pname==p["pname"]:
                 raise HTTPException(
-                status_code=status.HTTP_400_BAD_REQUEST,
-                detail="Project with same domain exists",
-                )
-    for p in proj["projects"]:
-        if projects.pname==p["pname"]:
-            raise HTTPException(
-                status_code=status.HTTP_400_BAD_REQUEST,
-                detail="Project with same name exists",
-                )
+                    status_code=status.HTTP_400_BAD_REQUEST,
+                    detail="Project with same name exists",
+                    )
 
     background_tasks.add_task(create_project_task, envText, projects,user_id)
 

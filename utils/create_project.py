@@ -90,6 +90,7 @@ def create_project_task(envText: str, projects: ProjectModel, user_id: str):
         {"user_id": user_id, "projects.id": projects.id},
         {"$set": {"projects.$.port": 9000 + count}}
     )
+    print(9000+count)
     print(f"{projects.url =} {username =} {projects.id =} {projects.pname =} {projects =}")
     create_project(projects.url, username, projects.id, projects.domain, 9000 + count)
 
