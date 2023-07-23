@@ -39,6 +39,31 @@ def create_project_task(envText: str, projects: ProjectModel,user_id:str):
     projects.build_status=2
     print(f"{projects.id =}\n")
     proj = proj_coll.find_one({"user_id": user_id})
+
+    try:
+        # adding category to DB
+        # Check if the category already exists for the user
+        pro = proj_coll.find()
+        count = 0
+        for p in pro:
+            if projects.domain==(p["projects"]["domain"]+".radr.in"):
+                raise HTTPException(
+                    status_code=status.HTTP_400_BAD_REQUEST,
+                    detail="Project with same domain exists",
+                )
+        for p in proj["projects"]:
+            if projects.pname==p["pname"]:
+                raise HTTPException(
+                    status_code=status.HTTP_400_BAD_REQUEST,
+                    detail="Project with same name exists",
+                )
+
+    except Exception as e:
+        print(f"{e =}\n")
+        raise HTTPException(
+            status_code=status.HTTP_400_BAD_REQUEST,
+            detail="Category not added",
+        )
     print(f"{proj =}\n")
     if proj:
         print("project exists\n")

@@ -52,6 +52,30 @@ async def create_project(background_tasks: BackgroundTasks,envText: str = Body(d
             headers={"WWW-Authenticate": "Bearer"},
         )
     user_id = user["_id"]
+    proj=proj_coll.find_one({"user_id": user_id})
+    try:
+        # adding category to DB
+        # Check if the category already exists for the user
+        pro = proj_coll.find()
+        for p in pro:
+            if projects.domain==(p["projects"]["domain"]+".radr.in"):
+                raise HTTPException(
+                    status_code=status.HTTP_400_BAD_REQUEST,
+                    detail="Project with same domain exists",
+                )
+        for p in proj["projects"]:
+            if projects.pname==p["pname"]:
+                raise HTTPException(
+                    status_code=status.HTTP_400_BAD_REQUEST,
+                    detail="Project with same name exists",
+                )
+
+    except Exception as e:
+        print(f"{e =}\n")
+        raise HTTPException(
+            status_code=status.HTTP_400_BAD_REQUEST,
+            detail="Some error occured",
+        )
     background_tasks.add_task(create_project_task, envText, projects,user_id)
 
     return {"message": "Project creation started"}
@@ -142,7 +166,7 @@ async def resume_project(background_tasks: BackgroundTasks,project_id: str,token
     
     framework = check_project_framework_from_path(f"projects/{project_id}")
     if framework == "django":
-            background_tasks.add_task(start_django_project, f"projects/{project_id}")
+        background_tasks.add_task(start_django_project, f"projects/{project_id}")
     elif framework == "html":
         print('html')
         background_tasks.add_task(start_docker_project,f"projects/{project_id}")
