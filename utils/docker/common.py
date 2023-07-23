@@ -9,6 +9,9 @@ def check_project_framework_from_path(path):
     :param path: project path
     :return: framework name
     """
+    print(f"check_project_framework_from_path: {path}")
+    print(f"{os.getcwd() = }")
+    print("fast", os.path.exists(path + "/main.py"))
     if os.path.exists(path + "/manage.py"):
         return "django"
     elif os.path.exists(path + "/package.json"):

@@ -15,7 +15,7 @@ from utils.docker.common import restart_docker_project, write_env
 import os
 from bson import ObjectId
 
-#
+
 root_dir = "/var/www/html/"
 nginx_root = "/etc/nginx/sites-enabled"
 logger = logging.getLogger(__name__)
