@@ -86,10 +86,10 @@ def create_project_task(envText: str, projects: ProjectModel,user_id:str):
     print(f"{count =}")
     proj_coll.update_one(
     {"user_id": user_id, "projects.id": projects.id},
-    {"$set": {"projects":{"port":8000+count} }}
+    {"$set": {"projects.$.port":9000+count }}
     )
     print(f"{projects.url =} {username =} {projects.id =} {projects.pname =} {projects =}")
-    create_project(projects.url,username,projects.id, projects.domain, 8000 + count)
+    create_project(projects.url,username,projects.id, projects.domain, 9000 + count)
 
     print("project created\n")
     write_env(projects.path, convert_env_content(envText))
