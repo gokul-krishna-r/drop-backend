@@ -288,7 +288,7 @@ def delete_category(project_cat, user_id):
 
         count = proj_coll.count_documents({"user_id": user_id,"projects.category": project_cat})
         print(count)
-        if count == 0 :
+        if count == 1 :
             #   Category doesn't exist, insert a new document
             cat_coll.delete_one({"name": project_cat, "user_id": user_id})
     except Exception as e:
