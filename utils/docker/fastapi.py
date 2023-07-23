@@ -22,7 +22,7 @@ services:
             - "{port}:8000"
         volumes:
             - .:/code
-        command:  uvicorn main:app --reload
+        command:  uvicorn main:app --host 0.0.0.0 --port 8000 
     """
     with open('docker-compose.yml', 'w') as f:
         f.write(docker_compose)
