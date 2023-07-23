@@ -18,7 +18,7 @@ def check_project_framework_from_path(path):
                 return "react"
             elif "express" in content:
                 return "express"
-    elif any(file.endswith('.py') and "fastapi" in open(os.path.join(path, file)).read() for file in os.listdir(path)):
+    elif os.path.exists(path + "/main.py"):
         return "fastapi"
     elif os.path.exists(path + "/index.html"):
         return "html"
