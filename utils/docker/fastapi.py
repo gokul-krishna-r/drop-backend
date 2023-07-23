@@ -20,6 +20,8 @@ services:
             dockerfile: Dockerfile
         ports:
             - "{port}:8000"
+        env_file:
+            - .env
         volumes:
             - .:/code
         command:  uvicorn main:app --host 0.0.0.0 --port 8000 
