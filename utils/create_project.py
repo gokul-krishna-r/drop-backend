@@ -6,12 +6,12 @@ from utils.docker.common import clone_project, check_project_framework_from_path
 import logging
 from server.models import ProjectModel
 from dotenv import load_dotenv
-from fastapi import Body, Depends, HTTPException, status, File, UploadFile,Request
+from fastapi import Body, Depends, HTTPException, status, File, UploadFile, Request
 from fastapi.encoders import jsonable_encoder
 
 from server.authentication import decode_token
 from server.database import database
-from utils.docker.common import restart_docker_project,write_env
+from utils.docker.common import restart_docker_project, write_env
 import os
 from bson import ObjectId
 
@@ -30,13 +30,15 @@ CATEGORY_COLLECTION = os.environ.get("CATEGORY_COLLECTION")
 proj_coll = database[PROJECT_COLLECTION]
 user_coll = database[USER_COLLECTION]
 cat_coll = database[CATEGORY_COLLECTION]
+
+
 # root_dir = "/home/sunith/Documents/projects/next/drop-backend/"
 # nginx_root = "/home/sunith/Documents/projects/next/drop-backend/nginx"
 
-def create_project_task(envText: str, projects: ProjectModel,user_id:str):
+def create_project_task(envText: str, projects: ProjectModel, user_id: str):
     projects.id = str(ObjectId())
-    projects.domain+=".radr.in"
-    projects.build_status=2
+    projects.domain += ".radr.in"
+    projects.build_status = 2
     print(f"{projects.id =}\n")
     proj = proj_coll.find_one({"user_id": user_id})
 
@@ -85,11 +87,11 @@ def create_project_task(envText: str, projects: ProjectModel,user_id:str):
 
     print(f"{count =}")
     proj_coll.update_one(
-    {"user_id": user_id, "projects.id": projects.id},
-    {"$set": {"projects.$.port":9000+count }}
+        {"user_id": user_id, "projects.id": projects.id},
+        {"$set": {"projects.$.port": 9000 + count}}
     )
     print(f"{projects.url =} {username =} {projects.id =} {projects.pname =} {projects =}")
-    create_project(projects.url,username,projects.id, projects.domain, 9000 + count)
+    create_project(projects.url, username, projects.id, projects.domain, 9000 + count)
 
     print("project created\n")
     write_env(projects.path, convert_env_content(envText))
@@ -104,7 +106,8 @@ def create_project_task(envText: str, projects: ProjectModel,user_id:str):
             status_code=status.HTTP_400_BAD_REQUEST,
             detail="Project not added",
         )
-    
+
+
 def create_project(url, user, proj_name, domain, port=8001, runcommand="python manage.py runserver 0.0.0.0:8000"):
     """
     :param runcommand:
@@ -128,7 +131,6 @@ def create_project(url, user, proj_name, domain, port=8001, runcommand="python m
         handle_fastapi(path=path, domain=domain, port=port, runcommand=runcommand)
 
 
-
 def delete_project(user, proj_name, domain):
     print(f"delete_project: {user}, {proj_name}, {domain}")
     path = f"projects/{proj_name}"
@@ -147,6 +149,7 @@ def convert_env_content(env_content: str):
         env_data[key.strip()] = value.strip()
 
     return env_data
+
 
 if __name__ == "__main__":
     create_project(sys.argv[1], sys.argv[2], sys.argv[3], sys.argv[4])

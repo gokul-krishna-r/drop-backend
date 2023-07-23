@@ -6,6 +6,8 @@
 
 import os
 
+from utils.docker.common import checkout_to_project_folder
+
 
 def generate_docker_compose_file(port, runcommand="uvicorn main:app --reload"):
     docker_compose = f"""
@@ -45,5 +47,10 @@ COPY . /code/
 
 def create_fastapi_project(path, domain, port=8000, runcommand="uvicorn main:app --reload"):
     os.chdir(f"{path}")
+    print(f"create_fastapi_project: {path}")
     generate_docker_compose_file(port=port, runcommand=runcommand)
+    print(f"create_fastapi_project: docker-compose.yml created")
     generate_dockerfile()
+    print(f"create_fastapi_project: Dockerfile created")
+    checkout_to_project_folder()
+    print(f"create_fastapi_project: checkout_to_project_folder")

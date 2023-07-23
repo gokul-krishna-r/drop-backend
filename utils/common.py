@@ -9,7 +9,7 @@ from utils.docker.common import start_docker_project
 from utils.docker.django import create_django_project
 from utils.nginx.main import create_nginx, create_proxy_nginx
 from utils.docker.fastapi import create_fastapi_project
-from utils.docker.django   import start_django_project
+from utils.docker.django import start_django_project
 
 import logging
 
@@ -57,6 +57,8 @@ def handle_fastapi(path: str, domain: str, port: int = 8001, runcommand: str = "
     """
     print(f"handle_fastapi: {path}, {domain}, {port}, {runcommand}")
     create_fastapi_project(path, domain, port, runcommand)
+    print(f"handle_fastapi: {path}, {domain}, {port}, {runcommand} created")
     create_proxy_nginx(path=path, domain=domain, port=port)
+    print(f"handle_fastapi: {path}, {domain}, {port}, {runcommand} created proxy")
     # time.sleep(10)
     start_docker_project(path=path)
