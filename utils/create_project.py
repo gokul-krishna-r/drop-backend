@@ -128,6 +128,7 @@ def create_project(url, user, proj_name, domain, port=8001, runcommand="python m
     elif framework == 'django':
         handle_django(path=path, domain=domain, port=port, runcommand=runcommand)
     elif framework == 'fastapi':
+        print("fastapi is called")
         handle_fastapi(path=path, domain=domain, port=port, runcommand=runcommand)
 
 
